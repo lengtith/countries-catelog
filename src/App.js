@@ -70,7 +70,7 @@ const App = () => {
     return currentItems.map((country) => (
       <tr key={country.name.official}>
         <td>
-          <img src={country.flags.png} width={48} alt="" />
+          <img className='rounded' src={country.flags.png} width={32} alt={country.name.common} title={country.name.common} />
         </td>
         <td onClick={() => handleCountryClick(country)}>{country.name.official}</td>
         <td>{country.cca2}</td>
