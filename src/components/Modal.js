@@ -1,7 +1,11 @@
 const Modal = ({ country, onClose }) => (
     <div className="modal">
         <div className="modal-content">
-            <span className="close" onClick={onClose}>&times;</span>
+
+            {/* Icon close */}
+            <span className="close" onClick={onClose}>&times;</span> 
+
+            {/* Modal header */}
             <div className="flex flex-col gap-2 mb-5">
                 <div className="flex items-center gap-5">
                     <img className="rounded-lg" src={country.flags.png} title={country.name.common} height={60} alt={country.name.official} />
@@ -11,10 +15,12 @@ const Modal = ({ country, onClose }) => (
                     </div>
                 </div>
             </div>
+
             <hr />
 
+            {/* Modal body */}
             {/* Name */}
-            <div className="flex flex-col gap-2 mb-2">
+            {country.name && <div className="flex flex-col gap-2 mb-2">
                 <h4>Name</h4>
                 <div className="flex">
                     <div className="basis-20">Common</div>
@@ -24,143 +30,211 @@ const Modal = ({ country, onClose }) => (
                     <div className="basis-20">Offical</div>
                     <div>: {country.name.official}</div>
                 </div>
-                <div className="flex">
-                    <div className="basis-20">Native Name</div>
-                    <div>: {country.name.nativeName && Object.keys(country.name.nativeName).map(language => country.name.nativeName[language].official).join(', ')}</div>
+                <div className="flex flex-col gap-2">
+                    <div>Native Name</div>
+                    <div className="mb-2">
+                        {country.name.nativeName && Object.entries(country.name.nativeName).map(([key, value], index) => (
+                            <div key={key} className="flex">
+                                <div className="basis-20">{index + 1}. {key}</div>
+                                <div className="flex-1 mb-2">
+                                    {Object.entries(value).map(([key2, value2]) => (
+                                        <div key={key2} className="flex">
+                                            <div className="basis-20">{key2}</div>
+                                            <div>: {value2}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            </div>}
 
             {/* TLD */}
-            <div className="flex mb-2">
+            {country.tld && <div className="flex mb-2">
                 <h4 className="basis-20">tld</h4>
                 <div>: {country.tld && country.tld.map(item => item).join(', ')}</div>
-            </div>
+            </div>}
 
             {/* CCA2 */}
-            <div className="flex mb-2">
+            {country.cca2 && <div className="flex mb-2">
                 <h4 className="basis-20">cca2</h4>
                 <div>: {country.cca2}</div>
-            </div>
+            </div>}
 
             {/* CCN3 */}
-            <div className="flex mb-2">
+            {country.ccn3 && <div className="flex mb-2">
                 <h4 className="basis-20">ccn3</h4>
                 <div>: {country.ccn3}</div>
-            </div>
+            </div>}
 
             {/* CCA3 */}
-            <div className="flex mb-2">
+            {country.cca3 && <div className="flex mb-2">
                 <h4 className="basis-20">cca3</h4>
                 <div>: {country.cca3}</div>
-            </div>
+            </div>}
 
             {/* CIOC */}
-            <div className="flex mb-2">
+            {country.cioc && <div className="flex mb-2">
                 <h4 className="basis-20">cioc</h4>
                 <div>: {country.cioc}</div>
-            </div>
+            </div>}
 
             {/* Independent */}
-            <div className="flex mb-2">
+            {country.independent && <div className="flex mb-2">
                 <h4 className="basis-20">Independent</h4>
                 <div>: {country.independent === true ? 'Yes' : 'No'}</div>
-            </div>
+            </div>}
 
             {/* Status */}
-            <div className="flex mb-2">
+            {country.status && <div className="flex mb-2">
                 <h4 className="basis-20">Status</h4>
                 <div>: {country.status}</div>
-            </div>
+            </div>}
 
             {/* unMember */}
-            <div className="flex mb-2">
+            {country.unMember && <div className="flex mb-2">
                 <h4 className="basis-20">unMember</h4>
-                <div>: {country.independent === true ? 'Yes' : 'No'}</div>
-            </div>
+                <div>: {country.unMember === true ? 'Yes' : 'No'}</div>
+            </div>}
 
             {/* Currencies */}
-            <div className="flex flex-col gap-2 mb-2">
+            {country.currencies && <div className="flex flex-col gap-2 mb-2">
                 <h4>Currencies</h4>
-                <div className="flex">
-                    <div className="basis-20">XOF</div>
-                    <div>: {country.currencies.XOF && country.currencies.XOF.name}</div>
-                </div>
                 {
                     Object.entries(country.currencies).map(([key, value]) => (
-                        <div className="flex">
+                        <div key={key} className="flex">
                             <div className="basis-20">{key}</div>
-                            <div>: {value.name}</div>
+                            <div className="flex-1">: {value.name}</div>
                         </div>
                     ))
                 }
-            </div>
+            </div>}
 
             {/* IDD */}
-            <div className="flex">
+            {country.idd && country.idd.root && country.idd.suffixes && <div className="flex">
                 <h4 className="basis-20 mb-2">IDD</h4>
                 <div>: {country.idd && country.idd.root && country.idd.suffixes && country.idd.suffixes.map(suffix => country.idd.root + suffix).join(', ')}</div>
-            </div>
+            </div>}
 
             {/* Capital */}
-            <div className="flex">
+            {country.capital && <div className="flex">
                 <h4 className="basis-20 mb-2">Capital</h4>
                 <div>: {country.capital && country.capital.map(item => item).join(', ')}</div>
-            </div>
+            </div>}
 
             {/* altSpellings */}
-            <div className="flex">
+            {country.altSpellings && <div className="flex">
                 <h4 className="basis-20 mb-2">altSpellings</h4>
                 <div>: {country.altSpellings && country.altSpellings.map(item => item).join(', ')}</div>
-            </div>
+            </div>}
 
             {/* Region */}
-            <div className="flex">
+            {country.region && <div className="flex">
                 <h4 className="basis-20 mb-2">Region</h4>
                 <div>: {country.region}</div>
-            </div>
+            </div>}
 
             {/* Subregion */}
-            <div className="flex">
+            {country.subregion && <div className="flex">
                 <h4 className="basis-20 mb-2">Subregion</h4>
                 <div>: {country.subregion}</div>
-            </div>
+            </div>}
 
             {/* Languages */}
-            <div className="flex">
+            {country.languages && <div className="flex">
                 <h4 className="basis-20 mb-2">Languages</h4>
                 <div>: {country.languages && Object.values(country.languages).join(", ")}</div>
-            </div>
+            </div>}
 
             {/* Translations */}
-            <div className="flex">
+            {country.translations && <div className="flex">
                 <h4 className="basis-20 mb-2">Translations</h4>
-                <div className="flex-1">: {country.translations && Object.entries(country.translations).map(([key, value]) => `(${key}:${value.common})`).join(", ")}</div>
-            </div>
+                <div className="flex-1 mb-2">
+                    {country.translations && Object.entries(country.translations).map(([key, value], index) => (
+                        <div key={key} className="flex">
+                            <div className="basis-20">{index + 1}. {key}</div>
+                            <div className="flex-1 mb-2">
+                                {Object.entries(value).map(([key2, value2]) => (
+                                    <div key={key2} className="flex">
+                                        <div className="basis-20">{key2}</div>
+                                        <div className="flex-1">: {value2}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>}
+
+            {/* Latlng */}
+            {country.latlng && <div className="flex">
+                <h4 className="basis-20 mb-2">latlng</h4>
+                <div>: {country.latlng && country.latlng.map(item => item).join(', ')}</div>
+            </div>}
+
+            {/* Landlocked */}
+            {country.landlocked && <div className="flex mb-2">
+                <h4 className="basis-20">Landlocked</h4>
+                <div className="flex-1">: {country.landlocked === true ? 'Yes' : 'No'}</div>
+            </div>}
+
+            {/* Borders */}
+            {country.borders && <div className="flex">
+                <h4 className="basis-20 mb-2">Borders</h4>
+                <div className="flex-1">: {country.borders && country.borders.map(item => item).join(', ')}</div>
+            </div>}
+            
+            {/* Area */}
+            {country.area && <div className="flex">
+                <h4 className="basis-20 mb-2">Area</h4>
+                <div className="flex-1">: {country.area.toLocaleString()} km<sup>2</sup></div>
+            </div>}
+
+            {/* Demonyms */}
+            {country.demonyms && <div className="flex">
+                <h4 className="basis-20 mb-2">Demonyms</h4>
+                <div className="flex-1 mb-2">
+                    {country.demonyms && Object.entries(country.demonyms).map(([key, value], index) => (
+                        <div key={key} className="flex">
+                            <div className="basis-20">{index + 1}. {key}</div>
+                            <div className="flex-1 mb-2">
+                                {Object.entries(value).map(([key2, value2]) => (
+                                    <div key={key2} className="flex">
+                                        <div className="basis-10">{key2}</div>
+                                        <div className="flex-1">: {value2}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>}
 
             {/* Flag */}
-            <div className="flex">
+            {country.flag && <div className="flex">
                 <h4 className="basis-20 mb-2">Flag</h4>
                 <div>: {country.flag}</div>
-            </div>
+            </div>}
 
             {/* Maps */}
-            <div className="flex flex-col gap-2 mb-2">
+            {country.maps && <div className="flex flex-col gap-2 mb-2">
                 <h4>Maps</h4>
                 {
                     Object.entries(country.maps).map(([key, value]) => (
-                        <div className="flex">
+                        <div key={key} className="flex">
                             <div className="basis-20">{key}</div>
                             <div>: {value}</div>
                         </div>
                     ))
                 }
-            </div>
+            </div>}
 
             {/* Population */}
-            <div className="flex">
+            {country.population && <div className="flex">
                 <h4 className="basis-20 mb-2">Population</h4>
                 <div>: {country.population.toLocaleString()}</div>
-            </div>
+            </div>}
 
             {/* Gini */}
             {
@@ -168,7 +242,7 @@ const Modal = ({ country, onClose }) => (
                     <h4>Gini</h4>
                     {
                         Object.entries(country.gini).map(([key, value]) => (
-                            <div className="flex">
+                            <div key={key} className="flex">
                                 <div className="basis-20">{key}</div>
                                 <div>: {value}</div>
                             </div>
@@ -178,80 +252,85 @@ const Modal = ({ country, onClose }) => (
             }
 
             {/* Fifa */}
-            <div className="flex">
+            {country.fifa && <div className="flex">
                 <h4 className="basis-20 mb-2">Fifa</h4>
                 <div>: {country.fifa}</div>
-            </div>
+            </div>}
 
             {/* Car */}
-            <div className="flex flex-col gap-2 mb-2">
+            {country.car && <div className="flex flex-col gap-2 mb-2">
                 <h4>Car</h4>
                 {
                     Object.entries(country.car).map(([key, value]) => (
-                        <div className="flex">
+                        <div key={key} className="flex">
                             <div className="basis-20">{key}</div>
                             <div>: {value}</div>
                         </div>
                     ))
                 }
-            </div>
+            </div>}
 
             {/* Timezones */}
-            <div className="flex">
+            {country.timezones && <div className="flex">
                 <h4 className="basis-20 mb-2">Timezones</h4>
                 <div>: {country.timezones && country.timezones.map(item => item).join(', ')}</div>
-            </div>
+            </div>}
 
             {/* Continents */}
-            <div className="flex">
+            {country.continents && <div className="flex">
                 <h4 className="basis-20 mb-2">Continents</h4>
                 <div>: {country.continents && country.continents.map(item => item).join(', ')}</div>
-            </div>
+            </div>}
 
             {/* Flags */}
-            <div className="flex flex-col gap-2 mb-2">
+            {country.flags && <div className="flex flex-col gap-2 mb-2">
                 <h4>Flags</h4>
                 {
                     Object.entries(country.flags).map(([key, value]) => (
-                        <div className="flex">
+                        <div key={key} className="flex">
                             <div className="basis-20">{key}</div>
                             <div className="flex-1">: {value}</div>
                         </div>
                     ))
                 }
-            </div>
+            </div>}
 
             {/* coatOfArms */}
-            <div className="flex flex-col gap-2 mb-2">
+            {country.coatOfArms && <div className="flex flex-col gap-2 mb-2">
                 <h4>Coat Of Arms</h4>
                 {
                     Object.entries(country.coatOfArms).map(([key, value]) => (
-                        <div className="flex">
+                        <div key={key} className="flex">
                             <div className="basis-20">{key}</div>
                             <div>: {value}</div>
                         </div>
                     ))
                 }
-            </div>
+            </div>}
 
             {/* Capital Info */}
-            <div className="flex flex-col gap-2 mb-2">
+            {country.capitalInfo && <div className="flex flex-col gap-2 mb-2">
                 <h4>Capital Info</h4>
                 {
                     Object.entries(country.capitalInfo).map(([key, value]) => (
-                        <div className="flex">
+                        <div key={key} className="flex">
                             <div className="basis-20">{key}</div>
                             <div>: {value.map(item => item).join(', ')}</div>
                         </div>
                     ))
                 }
-            </div>
+            </div>}
 
             {/* StartOfWeek */}
-            <div className="flex">
+            {country.startOfWeek && <div className="flex">
                 <h4 className="basis-20 mb-2">Start Of Week</h4>
                 <div>: {country.startOfWeek}</div>
-            </div>
+            </div>}
+
+            <hr />
+
+            {/* Modal footer */}
+            <button className="px-3 py-2 bg-electric-blue text-white border-none rounded cursor-pointer" onClick={onClose}>Close</button>
         </div>
     </div>
 );
