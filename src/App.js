@@ -4,186 +4,167 @@ import Modal from './components/Modal';
 
 const App = () => {
   const [sortDirection, setSortDirection] = useState('asc');
-  const [allCountries, setAllCountries] = useState([]);
   const [countries, setCountries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(null);
   const itemsPerPage = 25;
-  // const paginationRange = 5;
 
   useEffect(() => {
-    fetchData();
+    return () => fetchData();
   }, []);
 
+  // Get countries from api url
   const fetchData = async () => {
     try {
       const response = await axios.get('https://restcountries.com/v3.1/all');
-      const data = response.data;
+      const data = await response.data;
       setCountries(data);
-      setAllCountries(data);
     } catch (error) {
-      console.error('Error fetching data:', error);
-      // You can handle the error here, such as displaying an error message
+      console.error('Error fetching data:', error.message);
     }
   };
 
+  // Get specific country data for modal popup
   const handleCountryClick = (country) => {
     setSelectedCountry(country);
   };
 
+  // Close modal popup
   const handleCloseModal = () => {
     setSelectedCountry(null);
   };
 
+  //Get data from input search
   const handleSearch = (event) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-    const searchResults = query
-      ? countries.filter((country) =>
-        country.name.common.toLowerCase().includes(query.toLowerCase().trim())
-      )
-      : allCountries;
-
-    setCountries(searchResults);
+    setSearchQuery(event.target.value);
   };
 
-  const sortData = (key) => {
-    const sortedCountries = [...countries];
+  // Filter countries when have search query
+  const filteredCountries = countries.filter(country =>
+    country.name.official.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const lastCountry = currentPage * itemsPerPage; // Find index of last country in current page
+  const firstCountry = lastCountry - itemsPerPage; // Find index of first country in current page
+  const currentCountries = filteredCountries.slice(firstCountry, lastCountry); // Get countries for current page
+  const totalPage = Math.ceil(countries.length / itemsPerPage); //Find the total number of pages
+
+  // Sort countries function by name
+  const sortCountries = () => {
+    const sortedCountries = [...filteredCountries];
 
     if (sortDirection === 'asc') {
-      sortedCountries.sort((a, b) => a.name.common.localeCompare(b.name.common));
+      sortedCountries.sort((a, b) => a.name.official.localeCompare(b.name.official));
       setSortDirection('desc');
     } else {
-      sortedCountries.sort((a, b) => b.name.common.localeCompare(a.name.common));
+      sortedCountries.sort((a, b) => b.name.official.localeCompare(a.name.official));
       setSortDirection('asc');
     }
 
     setCountries(sortedCountries);
   };
 
-  const renderTableData = () => {
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = countries.slice(indexOfFirstItem, indexOfLastItem);
-
-    return currentItems.map((country) => (
-      <tr key={country.name.official}>
-        <td>
-          <img className='rounded' src={country.flags.png} width={32} alt={country.name.common} title={country.name.common} />
-        </td>
-        <td onClick={() => handleCountryClick(country)}>{country.name.official}</td>
-        <td>{country.cca2}</td>
-        <td>{country.cca3}</td>
-        <td>{country.name.nativeName && Object.keys(country.name.nativeName).map(language => country.name.nativeName[language].official).join(', ')}</td>
-        <td>{country.altSpellings.map(altSpelling => altSpelling).join(', ')}</td>
-        <td>
-          {country.idd && country.idd.root && country.idd.suffixes && country.idd.suffixes.map(suffix => country.idd.root + suffix).join(', ')}
-        </td>
-      </tr>
-    ));
+  // Back to previous page function
+  const handlePreviousPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
   };
 
-  const renderTableHeader = () => {
-    return (
-      <tr>
-        <th>Flags</th>
-        <th onClick={() => sortData()}>
-          Name
-          {sortDirection === 'asc' ? <span> &uarr;</span> : <span> &darr;</span>}
-        </th>
-        <th>Country Code</th>
-        <th>Country Code</th>
-        <th>Native Name</th>
-        <th>Alternative Name</th>
-        <th>Calling Codes</th>
-      </tr>
-    );
-  };
-
-
-
-  const renderPagination = () => {
-
-    const pageNumbers = Math.ceil(countries.length / itemsPerPage);
-
-    const handlePreviousPage = () => {
-      setCurrentPage((prevPage) => prevPage - 1);
-    };
-
-    const handleNextPage = () => {
-      setCurrentPage((prevPage) => prevPage + 1);
-    };
-
-    return (
-      <div className="pagination">
-        <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <button onClick={handleNextPage} disabled={currentPage === pageNumbers}>
-          Next
-        </button>
-      </div>
-    );
-
-    // const handlePagination = (pageNumber) => {
-    //   setCurrentPage(pageNumber);
-    // };
-
-    // const pageNumbers = [];
-    // const currentPageIndex = currentPage - 1;
-    // const totalPages = Math.ceil(countries.length / itemsPerPage);
-
-    // // Calculate the start and end page numbers for pagination range
-    // let startPage = Math.max(0, currentPageIndex - Math.floor(paginationRange / 2));
-    // let endPage = Math.min(totalPages - 1, startPage + paginationRange - 1);
-
-    // // Adjust start and end page numbers if they exceed the pagination limits
-    // if (endPage - startPage < paginationRange - 1) {
-    //   startPage = Math.max(0, endPage - paginationRange + 1);
-    // }
-
-    // // Generate the page numbers to render
-    // for (let i = startPage; i <= endPage; i++) {
-    //   pageNumbers.push(i + 1);
-    // }
-
-    // return (
-    //   <div>
-    //     {currentPage > 1 && (
-    //       <button onClick={() => handlePagination(currentPage - 1)}>Previous</button>
-    //     )}
-
-    //     {pageNumbers.map((pageNumber) => (
-    //       <button
-    //         key={pageNumber}
-    //         onClick={() => handlePagination(pageNumber)}
-    //         style={{ fontWeight: currentPage === pageNumber ? 'bold' : 'normal' }}
-    //       >
-    //         {pageNumber}
-    //       </button>
-    //     ))}
-
-    //     {currentPage < totalPages && (
-    //       <button onClick={() => handlePagination(currentPage + 1)}>Next</button>
-    //     )}
-    //   </div>
-    // );
+  // Goto the next page function
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
   };
 
   return (
-    <div>
-      <input type="text" value={searchQuery} onChange={handleSearch} placeholder="Search countries" />
-      <table>
-        <thead>{renderTableHeader()}</thead>
-        <tbody>{renderTableData()}</tbody>
-      </table>
+    <div className='container m-auto'>
+      <div className='w-full my-5 bg-white border-2 border-gray-100 rounded-lg'>
 
-      {renderPagination()}
+        {/* Header */}
+        <div className='flex justify-between items-center p-5 border-bottom-2 border-gray-100'>
+          <h3>Countries Catalog</h3>
+          <input className='w-1/5' type="text" value={searchQuery} onChange={handleSearch} placeholder="Search here ..." />
+        </div>
 
+        {/* Table */}
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Flags</th>
+              <th className='whitespace-nowrap cursor-pointer' onClick={() => sortCountries()}>
+                <span>Official Name</span>
+                {sortDirection === 'asc' ? <span> &uarr;</span> : <span> &darr;</span>}
+              </th>
+              <th>CCA2</th>
+              <th>CCA3</th>
+              <th className='whitespace-nowrap'>Native Name</th>
+              <th className='whitespace-nowrap'>Alternative Name</th>
+              <th className='whitespace-nowrap'>Calling Codes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentCountries.map((country, index) => (
+              <tr key={country.name.official}>
+                <td>{(currentPage - 1) * 25 + (index + 1)}</td>
+                <td>
+                  <img className='rounded object-cover' src={country.flags.png} width={32} height={24} alt={country.name.common} title={country.name.common} />
+                </td>
+                <td onClick={() => handleCountryClick(country)}>
+                  <span className='line-clamp-1 cursor-pointer'>{country.name.official}</span>
+                </td>
+                <td>
+                  <span>{country.cca2}</span>
+                </td>
+                <td>
+                  <span>{country.cca3}</span>
+                </td>
+                <td>
+                  <span className='line-clamp-1'>
+                    {country.name.nativeName && Object.keys(country.name.nativeName).map(language => country.name.nativeName[language].official).join(', ')}
+                  </span>
+                </td>
+                <td>
+                  <span className='line-clamp-1'>
+                    {country.altSpellings.map(altSpelling => altSpelling).join(', ')}
+                  </span>
+                </td>
+                <td>
+                  <span className='line-clamp-1'>
+                    {country.idd && country.idd.root && country.idd.suffixes && country.idd.suffixes.map(suffix => country.idd.root + suffix).join(', ')}
+                  </span>
+                </td>
+              </tr>
+            ))
+            }
+          </tbody>
+        </table>
+
+        {/* Pagination */}
+        <div className="flex justify-between items-center p-5">
+          <div>
+            <p>Showing {(currentPage * 25) - 25 + 1} to {(currentPage * 25) > filteredCountries.length ? filteredCountries.length : currentPage * 25} of {filteredCountries.length} results</p>
+          </div>
+
+          <div>
+            <p>Per page 25</p>
+          </div>
+
+          <div className='flex gap-2'>
+            <button className={`px-3 py-2 border-none rounded " ${currentPage === 1 ? "bg-mint-cream text-black" : "bg-electric-blue text-white cursor-pointer"} `} onClick={handlePreviousPage} disabled={currentPage === 1}>
+              Previous
+            </button>
+            <button className={`px-3 py-2 text-white border-none rounded " ${currentPage === totalPage ? "bg-mint-cream text-black" : "bg-electric-blue text-white cursor-pointer"}`} onClick={handleNextPage} disabled={currentPage === totalPage}>
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal popup */}
       {selectedCountry && (
         <Modal country={selectedCountry} onClose={handleCloseModal} />
       )}
+
     </div>
   );
 };
