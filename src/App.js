@@ -102,7 +102,7 @@ const App = () => {
           <tbody>
             {countries.length === 0
               ? <tr>
-                <td className='p-5'>Data loading...</td>
+                <td colSpan={8} className='p-5'>Data loading...</td>
               </tr>
               : <>
                 {currentCountries.length === 0
