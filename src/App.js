@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Modal from './components/Modal';
 
 const App = () => {
@@ -10,19 +9,17 @@ const App = () => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const itemsPerPage = 25;
 
+  // Run function to get data when page render
   useEffect(() => {
     return () => fetchData();
   }, []);
 
   // Get countries from api url
   const fetchData = async () => {
-    try {
-      const response = await axios.get('https://restcountries.com/v3.1/all');
-      const data = await response.data;
-      setCountries(data);
-    } catch (error) {
-      console.error('Error fetching data:', error.message);
-    }
+    await fetch(`https://restcountries.com/v3.1/all`)
+      .then(response => response.json())
+      .then(data => setCountries(data))
+      .catch(err => console.log(err.message));
   };
 
   // Get specific country data for modal popup
@@ -48,7 +45,7 @@ const App = () => {
   const lastCountry = currentPage * itemsPerPage; // Find index of last country in current page
   const firstCountry = lastCountry - itemsPerPage; // Find index of first country in current page
   const currentCountries = filteredCountries.slice(firstCountry, lastCountry); // Get countries for current page
-  const totalPage = Math.ceil(countries.length / itemsPerPage); //Find the total number of pages
+  const totalPage = Math.ceil(filteredCountries.length / itemsPerPage); //Get the total number of pages
 
   // Sort countries function by name
   const sortCountries = () => {
@@ -82,62 +79,68 @@ const App = () => {
         {/* Header */}
         <div className='flex justify-between items-center p-5 border-bottom-2 border-gray-100'>
           <h3>Countries Catalog</h3>
-          <input className='w-1/5' type="text" value={searchQuery} onChange={handleSearch} placeholder="Search here ..." />
+          <input className='w-1/5' type="text" name='search' value={searchQuery} onChange={handleSearch} placeholder="Search here ..." />
         </div>
 
         {/* Table */}
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Flags</th>
-              <th className='whitespace-nowrap cursor-pointer' onClick={() => sortCountries()}>
-                <span>Official Name</span>
-                {sortDirection === 'asc' ? <span> &uarr;</span> : <span> &darr;</span>}
-              </th>
-              <th>CCA2</th>
-              <th>CCA3</th>
-              <th className='whitespace-nowrap'>Native Name</th>
-              <th className='whitespace-nowrap'>Alternative Name</th>
-              <th className='whitespace-nowrap'>Calling Codes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentCountries.map((country, index) => (
-              <tr key={country.name.official}>
-                <td>{(currentPage - 1) * 25 + (index + 1)}</td>
-                <td>
-                  <img className='rounded object-cover' src={country.flags.png} width={32} height={24} alt={country.name.common} title={country.name.common} />
-                </td>
-                <td onClick={() => handleCountryClick(country)}>
-                  <span className='line-clamp-1 cursor-pointer'>{country.name.official}</span>
-                </td>
-                <td>
-                  <span>{country.cca2}</span>
-                </td>
-                <td>
-                  <span>{country.cca3}</span>
-                </td>
-                <td>
-                  <span className='line-clamp-1'>
-                    {country.name.nativeName && Object.keys(country.name.nativeName).map(language => country.name.nativeName[language].official).join(', ')}
-                  </span>
-                </td>
-                <td>
-                  <span className='line-clamp-1'>
-                    {country.altSpellings.map(altSpelling => altSpelling).join(', ')}
-                  </span>
-                </td>
-                <td>
-                  <span className='line-clamp-1'>
-                    {country.idd && country.idd.root && country.idd.suffixes && country.idd.suffixes.map(suffix => country.idd.root + suffix).join(', ')}
-                  </span>
-                </td>
+        {countries.length === 0
+          ? <div className='p-5'>Data loading...</div>
+          : <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Flags</th>
+                <th className='whitespace-nowrap cursor-pointer' onClick={() => sortCountries()}>
+                  <span>Official Name</span>
+                  {sortDirection === 'asc' ? <span> &uarr;</span> : <span> &darr;</span>}
+                </th>
+                <th>CCA2</th>
+                <th>CCA3</th>
+                <th className='whitespace-nowrap'>Native Name</th>
+                <th className='whitespace-nowrap'>Alternative Name</th>
+                <th className='whitespace-nowrap'>Calling Codes</th>
               </tr>
-            ))
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentCountries.length === 0
+                ? <tr>
+                  <td colSpan={8} className='p-5'>Countries not found</td>
+                </tr>
+                : currentCountries.map((country, index) => (
+                  <tr key={country.name.official}>
+                    <td>{(currentPage - 1) * 25 + (index + 1)}</td>
+                    <td>
+                      <img className='rounded object-cover' src={country.flags.png} width={32} height={24} alt={country.name.common} title={country.name.common} />
+                    </td>
+                    <td onClick={() => handleCountryClick(country)}>
+                      <span className='line-clamp-1 cursor-pointer'>{country.name.official}</span>
+                    </td>
+                    <td>
+                      <span>{country.cca2}</span>
+                    </td>
+                    <td>
+                      <span>{country.cca3}</span>
+                    </td>
+                    <td>
+                      <span className='line-clamp-1'>
+                        {country.name.nativeName && Object.keys(country.name.nativeName).map(language => country.name.nativeName[language].official).join(', ')}
+                      </span>
+                    </td>
+                    <td>
+                      <span className='line-clamp-1'>
+                        {country.altSpellings.map(altSpelling => altSpelling).join(', ')}
+                      </span>
+                    </td>
+                    <td>
+                      <span className='line-clamp-1'>
+                        {country.idd && country.idd.root && country.idd.suffixes && country.idd.suffixes.map(suffix => country.idd.root + suffix).join(', ')}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>}
 
         {/* Pagination */}
         <div className="flex justify-between items-center p-5">
