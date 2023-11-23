@@ -83,64 +83,69 @@ const App = () => {
         </div>
 
         {/* Table */}
-        {countries.length === 0
-          ? <div className='p-5'>Data loading...</div>
-          : <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Flags</th>
-                <th className='whitespace-nowrap cursor-pointer' onClick={() => sortCountries()}>
-                  <span>Official Name</span>
-                  {sortDirection === 'asc' ? <span> &uarr;</span> : <span> &darr;</span>}
-                </th>
-                <th>CCA2</th>
-                <th>CCA3</th>
-                <th className='whitespace-nowrap'>Native Name</th>
-                <th className='whitespace-nowrap'>Alternative Name</th>
-                <th className='whitespace-nowrap'>Calling Codes</th>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Flags</th>
+              <th className='whitespace-nowrap cursor-pointer' onClick={() => sortCountries()}>
+                <span>Official Name</span>
+                {sortDirection === 'asc' ? <span> &uarr;</span> : <span> &darr;</span>}
+              </th>
+              <th>CCA2</th>
+              <th>CCA3</th>
+              <th className='whitespace-nowrap'>Native Name</th>
+              <th className='whitespace-nowrap'>Alternative Name</th>
+              <th className='whitespace-nowrap'>Calling Codes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {countries.length === 0
+              ? <tr>
+                <td className='p-5'>Data loading...</td>
               </tr>
-            </thead>
-            <tbody>
-              {currentCountries.length === 0
-                ? <tr>
-                  <td colSpan={8} className='p-5'>Countries not found</td>
-                </tr>
-                : currentCountries.map((country, index) => (
-                  <tr key={country.name.official}>
-                    <td>{(currentPage - 1) * 25 + (index + 1)}</td>
-                    <td>
-                      <img className='rounded object-cover' src={country.flags.png} width={32} height={24} alt={country.name.common} title={country.name.common} />
-                    </td>
-                    <td onClick={() => handleCountryClick(country)}>
-                      <span className='line-clamp-1 cursor-pointer'>{country.name.official}</span>
-                    </td>
-                    <td>
-                      <span>{country.cca2}</span>
-                    </td>
-                    <td>
-                      <span>{country.cca3}</span>
-                    </td>
-                    <td>
-                      <span className='line-clamp-1'>
-                        {country.name.nativeName && Object.keys(country.name.nativeName).map(language => country.name.nativeName[language].official).join(', ')}
-                      </span>
-                    </td>
-                    <td>
-                      <span className='line-clamp-1'>
-                        {country.altSpellings.map(altSpelling => altSpelling).join(', ')}
-                      </span>
-                    </td>
-                    <td>
-                      <span className='line-clamp-1'>
-                        {country.idd && country.idd.root && country.idd.suffixes && country.idd.suffixes.map(suffix => country.idd.root + suffix).join(', ')}
-                      </span>
-                    </td>
+              : <>
+                {currentCountries.length === 0
+                  ? <tr>
+                    <td colSpan={8} className='p-5'>Countries not found</td>
                   </tr>
-                ))
-              }
-            </tbody>
-          </table>}
+                  : currentCountries.map((country, index) => (
+                    <tr key={country.name.official}>
+                      <td>{(currentPage - 1) * 25 + (index + 1)}</td>
+                      <td>
+                        <img className='rounded object-cover' src={country.flags.png} width={32} height={24} alt={country.name.common} title={country.name.common} />
+                      </td>
+                      <td onClick={() => handleCountryClick(country)}>
+                        <span className='line-clamp-1 cursor-pointer'>{country.name.official}</span>
+                      </td>
+                      <td>
+                        <span>{country.cca2}</span>
+                      </td>
+                      <td>
+                        <span>{country.cca3}</span>
+                      </td>
+                      <td>
+                        <span className='line-clamp-1'>
+                          {country.name.nativeName && Object.keys(country.name.nativeName).map(language => country.name.nativeName[language].official).join(', ')}
+                        </span>
+                      </td>
+                      <td>
+                        <span className='line-clamp-1'>
+                          {country.altSpellings.map(altSpelling => altSpelling).join(', ')}
+                        </span>
+                      </td>
+                      <td>
+                        <span className='line-clamp-1'>
+                          {country.idd && country.idd.root && country.idd.suffixes && country.idd.suffixes.map(suffix => country.idd.root + suffix).join(', ')}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </>
+            }
+          </tbody>
+        </table>
 
         {/* Pagination */}
         <div className="flex justify-between items-center p-5">
