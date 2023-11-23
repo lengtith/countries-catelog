@@ -1,8 +1,12 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Pull project via https
 
-## Available Scripts
+[https://github.com/lengtith/countries-catelog.git](https://github.com/lengtith/countries-catelog.git)
+
+## Install node module
+
+### `npm install`
 
 In the project directory, you can run:
 
