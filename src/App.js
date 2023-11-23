@@ -27,6 +27,7 @@ const App = () => {
       
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setCountries(data);
       } else {
         throw new Error(response.statusText);
