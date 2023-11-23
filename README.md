@@ -4,7 +4,7 @@
 
 [https://github.com/lengtith/countries-catelog.git](https://github.com/lengtith/countries-catelog.git)
 
-## Install node module
+Install node module
 
 ### `npm install`
 
