@@ -16,10 +16,24 @@ const App = () => {
 
   // Get countries from api url
   const fetchData = async () => {
-    await fetch(`https://restcountries.com/v3.1/all`)
-      .then(response => response.json())
-      .then(data => setCountries(data))
-      .catch(err => console.log(err.message));
+    try {
+      const response = await fetch(`https://restcountries.com/v3.1/all`, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET',
+          'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setCountries(data);
+      } else {
+        throw new Error(response.statusText);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   // Get specific country data for modal popup
