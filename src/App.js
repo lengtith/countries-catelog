@@ -24,7 +24,7 @@ const App = () => {
           'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept',
         },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log(data);
