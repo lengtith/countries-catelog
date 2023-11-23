@@ -11,7 +11,7 @@ const App = () => {
 
   // Run function to get data when page render
   useEffect(() => {
-    return () => fetchData();
+    fetchData();
   }, []);
 
   // Get countries from api url
